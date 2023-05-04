@@ -1,19 +1,20 @@
 import { useNavigate } from "react-router-dom";
+import { Button } from "antd";
 
-const MainPage = () => { 
-    let navigate = useNavigate();
-  
-    const loginPage = () => {
-        navigate("/login")
-    }
-    return (
-        <div>
-            <h1>main page</h1>
-            <button onClick={loginPage}>
-                login page
-            </button>
-        </div>
-    )
- }
+const MainPage = () => {
+  let navigate = useNavigate();
 
-export default MainPage
+  const loginPage = () => {
+    navigate("/login");
+  };
+  return (
+    <div>
+      <h1>صفحه اصلی</h1>
+      <Button type="primary" onClick={loginPage}>
+        ورود
+      </Button>
+    </div>
+  );
+};
+
+export default MainPage;
