@@ -1,17 +1,17 @@
-import { useState, useEffect, useContext  } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { Row, Col, Button} from "antd";
+import { Row, Col, Button } from "antd";
 import header from "../images/eastwood.jpg";
-import { StarTwoTone } from "@ant-design/icons";
+import { StarTwoTone, PlusOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import NavBar from "../components/navBar";
-import axios from 'axios';
+import axios from "axios";
 import { AuthContext } from "../App";
 
 const MainPage = () => {
   let navigate = useNavigate();
   const { state } = useContext(AuthContext);
-  
+
   const [movies, setMovies] = useState([
     // {
     //   id: 1,
@@ -60,21 +60,24 @@ const MainPage = () => {
   useEffect(() => {
     (async () => {
       try {
-        const response = await axios.get('https://cinemashelf.ir/api/movie/');
+        const response = await axios.get("https://cinemashelf.ir/api/movie/");
         console.log(response);
         setMovies(response.data);
-      } catch (error) {
-      }
+      } catch (error) {}
     })();
   }, []);
 
   useEffect(() => {
-    
-    console.log(state)
+    console.log(state);
   }, [state]);
 
-  const loginPage = () => {
-    navigate("/login");
+  const clickButton = () => {
+    console.log(state.isAuthenticated);
+    if (state.isAuthenticated) {
+      navigate("/user");
+    } else {
+      navigate("/login");
+    }
   };
 
   return (
@@ -93,7 +96,7 @@ const MainPage = () => {
         <div className="header-text">
           <h1>فیلم هایی که دوست دارید را دنبال کنید</h1>
           <h1>فیلم ها را برای مشاهده در آینده ذخیره کنید</h1>
-          <Button type="primary" size="large" onClick={loginPage}>
+          <Button type="primary" size="large" onClick={clickButton}>
             شروع کنید
           </Button>
         </div>
@@ -101,24 +104,28 @@ const MainPage = () => {
           <Row justify="space-rigth" align="middle">
             {movies.map((movie) => (
               <Col span={4} key={movie.id}>
-                <Link to={`/movies/${movie.id}`}>
-                  <div className="movie-card">
-                    <img
-                      src={movie.image}
-                      width={185}
-                      height={274}
-                      alt="movie"
-                    />
+                <div className="movie-card">
+                  <img src={movie.logo} width={185} height={274} alt="movie" />
 
-                    <div className="movie-content">
-                      <div className="card-score">
-                        <StarTwoTone twoToneColor="#FFD700" />
-                        <h3>{movie.score}</h3>
-                      </div>
-                      <h3>{movie.name}</h3>
+                  <div className="movie-content">
+                    <div className="card-score">
+                      <StarTwoTone twoToneColor="#FFD700" />
+                      <h3>{movie.imdb_rating}</h3>
                     </div>
+                    <Link to={`/movies/${movie.id}`}>
+                      <h3>{movie.name}</h3>
+                    </Link>
                   </div>
-                </Link>
+                  <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    onClick={clickButton}
+                    block
+                    className="watchlist-button"
+                  >
+                    علاقمندی
+                  </Button>
+                </div>
               </Col>
             ))}
           </Row>

@@ -1,9 +1,10 @@
 import "./App.css";
 import LoginPage from "./pages/LoginPage";
 import MainPage from "./pages/MainPage";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import MoviePage from "./pages/MoviePage";
 import { createContext, useReducer } from "react";
+import UserPage from "./pages/UserPage";
 
 (async function () {
   // we need less for antd global less variable and them customization.
@@ -25,7 +26,6 @@ const initialState = {
 const reducer = (state, action) => {
   switch (action.type) {
     case "LOGIN":
-      console.log(action.payload)
       localStorage.setItem("user", JSON.stringify(action.payload.user));
       localStorage.setItem("token", JSON.stringify(action.payload.token));
       return {
@@ -56,8 +56,23 @@ function App() {
       }}
     >
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/login"
+          element={
+            state.isAuthenticated ? <Navigate replace to="/" /> : <LoginPage />
+          }
+        />
         <Route path="/movies/:id" element={<MoviePage />} />
+        <Route
+          path="/user"
+          element={
+            state.isAuthenticated ? (
+              <UserPage />
+            ) : (
+              <Navigate replace to="/login" />
+            )
+          }
+        />
         <Route path="/" element={<MainPage />} />
       </Routes>
     </AuthContext.Provider>

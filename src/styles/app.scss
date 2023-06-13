@@ -269,9 +269,10 @@ a:hover {
 .movie-card {
   background-color: #21262c;
   width: 185px;
-  height: 458px;
+  height: 480px;
   margin: 10px auto;
   text-align: right;
+  position: relative;
 }
 
 .movie-content {
@@ -298,6 +299,10 @@ a:hover {
   text-align: center;
 }
 
+.text-right {
+  text-align: right;
+}
+
 .film-content {
   text-align: center;
   position: absolute;
@@ -315,11 +320,36 @@ a:hover {
   border: 0.5px solid white;
   border-radius: 2px;
   width: 220px;
-
 }
 
 .movie-story {
   text-align: justify;
   font-size: 15px;
   line-height: 30px;
+}
+
+.profile {
+  margin-top: 100px;
+  width: 1200px !important;
+  margin: 0px auto;
+}
+
+.profile {
+  text-align: center;
+  width: 100%;
+  padding-top: 100px;
+  align-items: center;
+}
+
+.profile-content {
+  width: 1200px !important;
+  margin: 0px auto;
+}
+
+.watchlist-button {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  margin-bottom: 0px 20px 20px;
+  
 }

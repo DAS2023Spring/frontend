@@ -10,10 +10,14 @@ const NavBar = () => {
 
   const { state } = useContext(AuthContext);
 
-  const loginPage = () => {
-    navigate("/login");
+  const clickButton = () => {
+    console.log(state.isAuthenticated)
+    if (state.isAuthenticated) {
+      navigate("/user");
+    } else {
+      navigate("/login");
+    }
   };
-
   return (
     <Row align="middle" className="site-navbar">
       <Col span={6}></Col>
@@ -32,7 +36,7 @@ const NavBar = () => {
         </Link>
       </Col>
       <Col span={6}>
-        <Button type="primary" onClick={loginPage}>
+        <Button type="primary" onClick={clickButton}>
           {state.isAuthenticated? "صفحه کاربری": "ورود"}
         </Button>
       </Col>
