@@ -1,4 +1,4 @@
-import { useState, useEffect   } from "react";
+import { useState, useEffect, useContext  } from "react";
 import { useNavigate } from "react-router-dom";
 import { Row, Col, Button} from "antd";
 import header from "../images/eastwood.jpg";
@@ -6,10 +6,11 @@ import { StarTwoTone } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import NavBar from "../components/navBar";
 import axios from 'axios';
+import { AuthContext } from "../App";
 
 const MainPage = () => {
   let navigate = useNavigate();
-
+  const { state } = useContext(AuthContext);
   
   const [movies, setMovies] = useState([
     // {
@@ -59,13 +60,18 @@ const MainPage = () => {
   useEffect(() => {
     (async () => {
       try {
-        const response = await axios.get('http://cinemashelf.ir/movie/');
+        const response = await axios.get('https://cinemashelf.ir/api/movie/');
         console.log(response);
         setMovies(response.data);
       } catch (error) {
       }
     })();
   }, []);
+
+  useEffect(() => {
+    
+    console.log(state)
+  }, [state]);
 
   const loginPage = () => {
     navigate("/login");
