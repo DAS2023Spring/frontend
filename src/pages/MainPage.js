@@ -1,8 +1,8 @@
-import { useState, useEffect, useContext } from "react";
+import {useState, useEffect, useContext} from "react";
 import { useNavigate } from "react-router-dom";
 import { Row, Col, Button } from "antd";
 import header from "../images/eastwood.jpg";
-import { StarTwoTone, PlusOutlined } from "@ant-design/icons";
+import { StarTwoTone, PlusOutlined, CheckOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import NavBar from "../components/navBar";
 import axios from "axios";
@@ -12,64 +12,27 @@ const MainPage = () => {
   let navigate = useNavigate();
   const { state } = useContext(AuthContext);
 
-  const [movies, setMovies] = useState([
-    // {
-    //   id: 1,
-    //   name: "The Whale",
-    //   score: 7.7,
-    //   image:
-    //     "https://m.media-amazon.com/images/M/MV5BZDQ4Njg4YTctNGZkYi00NWU1LWI4OTYtNmNjOWMyMjI1NWYzXkEyXkFqcGdeQXVyMTA3MDk2NDg2._V1_.jpg",
-    // },
-    // {
-    //   id: 2,
-    //   name: "Seven",
-    //   score: 8.6,
-    //   image:
-    //     "https://m.media-amazon.com/images/M/MV5BOTUwODM5MTctZjczMi00OTk4LTg3NWUtNmVhMTAzNTNjYjcyXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_.jpg",
-    // },
-    // {
-    //   id: 3,
-    //   name: "Unforgiven",
-    //   score: 8.2,
-    //   image:
-    //     "https://m.media-amazon.com/images/M/MV5BODM3YWY4NmQtN2Y3Ni00OTg0LWFhZGQtZWE3ZWY4MTJlOWU4XkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_.jpg",
-    // },
-    // {
-    //   id: 4,
-    //   name: "Conjuring",
-    //   score: 7.5,
-    //   image:
-    //     "https://m.media-amazon.com/images/M/MV5BMTM3NjA1NDMyMV5BMl5BanBnXkFtZTcwMDQzNDMzOQ@@._V1_.jpg",
-    // },
-    // {
-    //   id: 5,
-    //   name: "The Shining",
-    //   score: 8.4,
-    //   image:
-    //     "https://m.media-amazon.com/images/M/MV5BZWFlYmY2MGEtZjVkYS00YzU4LTg0YjQtYzY1ZGE3NTA5NGQxXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_.jpg",
-    // },
-    // {
-    //   id: 6,
-    //   name: "Godfather",
-    //   score: 9.2,
-    //   image:
-    //     "https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg",
-    // },
-  ]);
+  const [movies, setMovies] = useState([]);
+
+  const [movieButtonLoadings, setMovieButtonLoadings] = useState([]);
 
   useEffect(() => {
     (async () => {
       try {
-        const response = await axios.get("https://cinemashelf.ir/api/movie/");
-        console.log(response);
+        const headers = state.isAuthenticated? {"Authorization": state.token} : {}
+        const response = await axios.get("https://cinemashelf.ir/api/movie/", { headers: headers });
         setMovies(response.data);
       } catch (error) {}
     })();
-  }, []);
+  }, [state.isAuthenticated, state.token]);
 
   useEffect(() => {
     console.log(state);
   }, [state]);
+
+  useEffect(() => {
+    setMovieButtonLoadings(movies.map(_ => false))
+  }, [movies]);
 
   const clickButton = () => {
     console.log(state.isAuthenticated);
@@ -79,6 +42,48 @@ const MainPage = () => {
       navigate("/login");
     }
   };
+
+  async function addToWatchList (movie, index) {
+    if (movie.is_in_watchlist) {
+      return
+    }
+    if (!state.isAuthenticated) {
+      navigate("/login")
+    }
+    const headers = {"Authorization": state.token}
+    setMovieButtonLoadings(movieButtonLoadings.map((value, i) => i === index? true : value))
+    try {
+      await axios.post(
+        `https://cinemashelf.ir/api/movie/${movie.id}/watchlist/`,
+        {},
+        {headers: headers}
+      );
+    } catch (error) {
+      return
+    }
+    setMovieButtonLoadings(movieButtonLoadings.map((value, i) => i === index? false : value))
+    movie.is_in_watchlist = true
+  }
+
+  async function removeFromWatchList (movie, index) {
+    if (!movie.is_in_watchlist)
+      return
+    if (!state.isAuthenticated) {
+      navigate("/login")
+    }
+    const headers = {"Authorization": state.token}
+    setMovieButtonLoadings(movieButtonLoadings.map((value, i) => i === index? true : value))
+    try {
+      await axios.delete(
+        `https://cinemashelf.ir/api/movie/${movie.id}/watchlist/`,
+        {headers: headers}
+      );
+    } catch (error) {
+      return
+    }
+    setMovieButtonLoadings(movieButtonLoadings.map((value, i) => i === index? false : value))
+    movie.is_in_watchlist = false
+  }
 
   return (
     <div>
@@ -102,32 +107,34 @@ const MainPage = () => {
         </div>
         <div className="movie-list">
           <Row justify="space-rigth" align="middle">
-            {movies.map((movie) => (
-              <Col span={4} key={movie.id}>
-                <div className="movie-card">
-                  <img src={movie.logo} width={185} height={274} alt="movie" />
+            {movies.map((movie, index) => {
+              return (<Col span={4} key={movie.id}>
+                  <div className="movie-card">
+                    <img src={movie.logo} width={185} height={274} alt="movie"/>
 
-                  <div className="movie-content">
-                    <div className="card-score">
-                      <StarTwoTone twoToneColor="#FFD700" />
-                      <h3>{movie.imdb_rating}</h3>
+                    <div className="movie-content">
+                      <div className="card-score">
+                        <StarTwoTone twoToneColor="#FFD700"/>
+                        <h3>{movie.imdb_rating}</h3>
+                      </div>
+                      <Link to={`/movies/${movie.id}`}>
+                        <h3>{movie.name}</h3>
+                      </Link>
                     </div>
-                    <Link to={`/movies/${movie.id}`}>
-                      <h3>{movie.name}</h3>
-                    </Link>
+                    <Button
+                      type="primary"
+                      loading={movieButtonLoadings[index]}
+                      icon={movie.is_in_watchlist ? <CheckOutlined/> : <PlusOutlined/>}
+                      onClick={() => !movie.is_in_watchlist? addToWatchList(movie, index) : removeFromWatchList(movie, index)}
+                      block
+                      className="watchlist-button"
+                    >
+                      علاقمندی
+                    </Button>
                   </div>
-                  <Button
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    onClick={clickButton}
-                    block
-                    className="watchlist-button"
-                  >
-                    علاقمندی
-                  </Button>
-                </div>
-              </Col>
-            ))}
+                </Col>
+              )
+            })}
           </Row>
         </div>
       </div>

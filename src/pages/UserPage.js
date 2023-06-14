@@ -5,6 +5,7 @@ import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../App";
 import { StarTwoTone } from "@ant-design/icons";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const UserPage = () => {
   const [watchlist, setWatchlist] = useState([]);
@@ -13,24 +14,12 @@ const UserPage = () => {
   useEffect(() => {
     (async () => {
       try {
-        // const response = await axios.get("https://cinemashelf.ir/api/movie/");
+        const headers = state.isAuthenticated? {"Authorization": state.token} : {}
+        const response = await axios.get("https://cinemashelf.ir/api/movie/watchlist/", { headers: headers });
+        setWatchlist(response.data)
       } catch (error) {}
     })();
-    setWatchlist([
-      {
-        id: 1,
-        name: "The Whale",
-        imdb_rating: 7.7,
-        logo: "https://m.media-amazon.com/images/M/MV5BZDQ4Njg4YTctNGZkYi00NWU1LWI4OTYtNmNjOWMyMjI1NWYzXkEyXkFqcGdeQXVyMTA3MDk2NDg2._V1_.jpg",
-      },
-      {
-        id: 2,
-        name: "Seven",
-        imdb_rating: 8.6,
-        logo: "https://m.media-amazon.com/images/M/MV5BOTUwODM5MTctZjczMi00OTk4LTg3NWUtNmVhMTAzNTNjYjcyXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_.jpg",
-      },
-    ]);
-  }, []);
+  }, [state.isAuthenticated, state.token]);
   return (
     <>
       <div>
