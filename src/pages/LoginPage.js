@@ -12,6 +12,7 @@ const LoginPage = () => {
   let navigate = useNavigate();
 
   const registerSuccess = searchParams.get("registerSuccess")
+  const resetPasswordSuccess = searchParams.get("resetPasswordSuccess")
 
   const submitForm = async (values) => {
     try {
@@ -63,6 +64,12 @@ const LoginPage = () => {
                 حالا می‌توانید با استفاده نام کاربری و کلمه عبور خود وارد شوید.
               </div>
             ):""}
+            {resetPasswordSuccess === "1"? (
+              <div style={{color: "green"}}>
+                رمز شما با موفقیت تغییر کرد.
+                حالا می‌توانید با استفاده نام کاربری و کلمه عبور جدید خود وارد شوید.
+              </div>
+            ):""}
             <h1>ورود به صفحه کاربری</h1>
           </div>
           <Card className="card">
@@ -89,7 +96,9 @@ const LoginPage = () => {
                 </Button>
               </Form.Item>
             </Form>
-            <div className="text-center">رمز عبور خود را فراموش کرده اید؟</div>
+            <Button className="mr-auto ml-auto" type="link" onClick={() => navigate("/forgot-password")} block>
+              رمز عبور خود را فراموش کرده اید؟
+            </Button>
           </Card>
           <div className="text-center" style={{ margin: "20px 0px" }}>
             <h3>

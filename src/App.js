@@ -6,6 +6,7 @@ import MoviePage from "./pages/MoviePage";
 import { createContext, useReducer } from "react";
 import UserPage from "./pages/UserPage";
 import RegisterPage from "./pages/RegisterPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 
 (async function () {
   // we need less for antd global less variable and them customization.
@@ -68,6 +69,10 @@ function App() {
         <Route
           path="/register"
           element={state.isAuthenticated ? <Navigate replace to="/"/> : <RegisterPage/>}
+        />
+        <Route
+          path="/forgot-password"
+          element={state.isAuthenticated ? <Navigate replace to="/"/> : <ForgotPasswordPage/>}
         />
         <Route path="/movies/:id" element={<MoviePage />} />
         <Route

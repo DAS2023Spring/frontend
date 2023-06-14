@@ -52,7 +52,7 @@ const RegisterPage = () => {
     delete values.securityAnswer
     setLoading(true);
     try {
-      const response = await axios.post(
+      await axios.post(
         "https://cinemashelf.ir/api/user/register/",
         values
       );
