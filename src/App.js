@@ -5,6 +5,7 @@ import { Route, Routes, Navigate } from "react-router-dom";
 import MoviePage from "./pages/MoviePage";
 import { createContext, useReducer } from "react";
 import UserPage from "./pages/UserPage";
+import RegisterPage from "./pages/RegisterPage";
 
 (async function () {
   // we need less for antd global less variable and them customization.
@@ -63,6 +64,10 @@ function App() {
           element={
             state.isAuthenticated ? <Navigate replace to="/" /> : <LoginPage />
           }
+        />
+        <Route
+          path="/register"
+          element={state.isAuthenticated ? <Navigate replace to="/"/> : <RegisterPage/>}
         />
         <Route path="/movies/:id" element={<MoviePage />} />
         <Route

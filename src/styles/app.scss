@@ -406,3 +406,15 @@ a:hover {
 .logout-button {
   margin-right: 0.5rem;
 }
+
+.text-white {
+  color: white !important;
+}
+
+.black-bg-form label {
+  @extend .text-white;
+}
+
+.register-question-help {
+  margin-bottom: 1.5rem;
+}

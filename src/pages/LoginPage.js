@@ -3,12 +3,15 @@ import NavBar from "../components/navBar";
 import { useContext } from "react";
 import { AuthContext } from "../App";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 
 const LoginPage = () => {
+  const [ searchParams ] = useSearchParams()
   const { dispatch } = useContext(AuthContext);
   const [messageApi, contextHolder] = message.useMessage();
   let navigate = useNavigate();
+
+  const registerSuccess = searchParams.get("registerSuccess")
 
   const submitForm = async (values) => {
     try {
@@ -33,14 +36,14 @@ const LoginPage = () => {
   const errorMessage = () => {
     messageApi.open({
       type: "error",
-      content: "ورود با خطا مواجه شد",
+      content: "نام کاربری یا کلمه عبور شما اشتباه است!",
     });
   };
 
   const success = () => {
     messageApi.open({
       type: "success",
-      content: "با موفقیت وارد شدید",
+      content: "با موفقیت وارد شدید.",
     });
   };
 
@@ -54,6 +57,12 @@ const LoginPage = () => {
       <Row justify="center" align="middle" className="login-form">
         <Col span={6}>
           <div className="text-center">
+            {registerSuccess === "1"? (
+              <div style={{color: "green"}}>
+                ثبت نام شما با موفقیت انجام شد.
+                حالا می‌توانید با استفاده نام کاربری و کلمه عبور خود وارد شوید.
+              </div>
+            ):""}
             <h1>ورود به صفحه کاربری</h1>
           </div>
           <Card className="card">
@@ -62,7 +71,6 @@ const LoginPage = () => {
                 name="username"
                 rules={[
                   { required: true, message: "لطفا نام کاربری را وارد کنید" },
-                  // { type: "email", message: "ایمیل وارد شده معتبر نیست" },
                 ]}
               >
                 <Input size="large" placeholder="نام کاربری" />
@@ -71,7 +79,6 @@ const LoginPage = () => {
                 name="password"
                 rules={[
                   { required: true, message: "لطفا کلمه عبور را وارد کنید" },
-                  // { min: 8, message: "کلمه عبور حداقل باید ۸ کاراکتر باشد" },
                 ]}
               >
                 <Input size="large" type="password" placeholder="کلمه عبور" />
@@ -87,7 +94,7 @@ const LoginPage = () => {
           <div className="text-center" style={{ margin: "20px 0px" }}>
             <h3>
               هنوز اکانتی نساخته اید؟
-              <Button type="link">ثبت نام</Button>
+              <Button type="link" onClick={() => navigate("/register")}>ثبت نام</Button>
             </h3>
           </div>
         </Col>
