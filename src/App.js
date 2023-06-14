@@ -18,21 +18,22 @@ import UserPage from "./pages/UserPage";
 export const AuthContext = createContext();
 
 const initialState = {
-  isAuthenticated: false,
-  user: null,
-  token: null,
+  isAuthenticated: !!localStorage.getItem("token"),
+  user: JSON.parse(localStorage.getItem("user")),
+  token: JSON.parse(localStorage.getItem("token")),
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
     case "LOGIN":
+      const token = "Token " + action.payload.token;
       localStorage.setItem("user", JSON.stringify(action.payload.user));
-      localStorage.setItem("token", JSON.stringify(action.payload.token));
+      localStorage.setItem("token", JSON.stringify(token));
       return {
         ...state,
         isAuthenticated: true,
         user: action.payload.user,
-        token: action.payload.token,
+        token: token,
       };
     case "LOGOUT":
       localStorage.clear();

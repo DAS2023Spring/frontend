@@ -1,21 +1,60 @@
 import NavBar from "../components/navBar";
-import { Row, Col } from "antd";
+import {Row, Col, List, Input} from "antd";
+import {useContext, useEffect, useState} from "react";
+import axios from "axios";
+import {useParams} from "react-router-dom";
+import {StarTwoTone} from "@ant-design/icons";
+import {AuthContext} from "../App";
 
-const movie = {
-  id: 6,
-  name: "Changeling",
-  year: 2008,
-  score: 7.8,
-  poster:
-    "https://a.ltrbxd.com/resized/film-poster/4/9/6/5/5/49655-changeling-0-460-0-690-crop.jpg?v=8dde8c2298%202x",
-  headerImage:
-    "https://a.ltrbxd.com/resized/sm/upload/dm/rp/ux/6b/changeling-1200-1200-675-675-crop-000000.jpg?v=66f8fad09a",
-  story:
-    "سال ۱۹۲۸، در لس‌آنجلس، کریستین کالینز (آنجلینا جولی)، مادر مجرد مجبور می‌شود برای رفتن به سر کار، پسر ۹ ساله‌اش والتر را در خانه تنها بگذارد. اما زمانی که بازمی‌گردد، والتر را در خانه نمی‌یابد. جستجوهایش نتیجه نمی‌دهد و مراجعه‌اش به پلیس نیز سود چندانی ندارد. اما خطابه کشیش گوستاو برایگلب دربارهٔ فساد، بی‌لیاقتی و سهل‌انگاری پلیس لس‌آنجلس سبب می‌شود تا رئیس پلیس و مأمورین پرونده تلاش خود را چند برابر کنند. چند ماه بعد، پلیس به کریستین اطلاع می‌دهد فرزندش زنده در شهری دیگر یافته شده‌است. اما زمانی که کریستین برای تحویل گرفتن پسرش در مراسم برگزار شده توسط پلیس در ایستگاه راه‌آهن حاضر می‌شود، خود را با بچه‌ای اشتباهی روبرو می‌بیند. ",
-};
+const { TextArea } = Input;
 
 const MoviePage = () => {
-  return (
+  const { id } = useParams()
+  const [movie, setMovie] = useState()
+  const [userRating, setUserRating] = useState(1)
+  const [userRatingHover, setUserRatingHover] = useState()
+  const { state } = useContext(AuthContext);
+
+  async function rateEnterPress(event) {
+    event.preventDefault()
+    const comment = event.target.value
+    try {
+      const headers = state.isAuthenticated? {"Authorization": state.token} : {}
+      const response = await axios.post(
+        `https://cinemashelf.ir/api/movie/${id}/rating/`,
+        {
+          rating: userRating,
+          comment: comment,
+        },
+        { headers: headers }
+      );
+      window.location.reload()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  function shouldBeGreen(i) {
+    if (userRatingHover !== undefined) {
+      return i < userRatingHover
+    } else {
+      return i < userRating
+    }
+  }
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const headers = state.isAuthenticated? {"Authorization": state.token} : {}
+        console.log(state.isAuthenticated)
+        const response = await axios.get(`https://cinemashelf.ir/api/movie/${id}/`, {
+            headers: headers
+        });
+        setMovie(response.data);
+      } catch (error) {}
+    })();
+  }, [id]);
+  return (movie && (
     <div>
       <div>
         <div className="site-header-bg"></div>
@@ -23,18 +62,22 @@ const MoviePage = () => {
       </div>
 
       <div className="header-wrapper">
-        <img src={movie.headerImage} alt="header" className="header-image" />
+        <img src={movie.header_image} alt="header" className="header-image" />
         <div className="backdropmask"></div>
       </div>
       <div className="film-content">
         <Row align="left" className="movie-info">
           <Col span={8}>
-            <img src={movie.poster} alt="poster" className="poster" />
+            <img src={movie.logo} alt="poster" className="poster" />
           </Col>
           <Col span={10}>
             <div className="movie-story">
               <h1>{movie.name}</h1>
-              <h3>{movie.year}</h3>
+              <h3>{movie.created_year}</h3>
+              <h3>امتیاز: {movie.imdb_rating} از 100</h3>
+              {movie.overall_rating?
+                (<h3>امتیاز در سینماشلف: {movie.overall_rating} از 5</h3>):undefined
+              }
               {movie.story}
             </div>
           </Col>
@@ -42,9 +85,62 @@ const MoviePage = () => {
             {/* <img src={movie.poster} alt="poster" className="poster" /> */}
           </Col>
         </Row>
+        <Row className="movie-info">
+            <h1>دیدگاه‌ها</h1>
+        </Row>
+          {movie.can_rate? (
+              <Row className="movie-info rating">
+                  <div className="comment-container">
+                      <div className="comment-user">
+                          <h3 dir="ltr">@{state.user}</h3>
+                          <div className="star-container">
+                              {[...Array(5)].map((_, i) => (
+                                  <StarTwoTone
+                                    key={i}
+                                    twoToneColor={shouldBeGreen(i)? "green":"white"}
+                                    onClick={() => setUserRating(i + 1)}
+                                    onMouseEnter={() => setUserRatingHover(i + 1)}
+                                    onMouseLeave={() => setUserRatingHover(undefined)}
+                                  />
+                              ))}
+                          </div>
+                      </div>
+                      <div className="comment-content" style={{"width": "100%"}} >
+                          <TextArea
+                            onPressEnter={rateEnterPress}
+                            rows={4}
+                            style={{"background": "transparent", color: "white"}}
+                            placeholder="نظر خود را اضافه کنید."
+                            bordered={false}
+                            className="white-placeholder"
+                          />
+                      </div>
+                  </div>
+              </Row>
+          ) : ""}
+        <List
+          itemLayout="horizontal"
+          dataSource={movie.ratings}
+          renderItem={(rating, index) => (
+              <List.Item className="rating">
+                  <div className="comment-container">
+                      <div className="comment-user">
+                          <h3 dir="ltr">@{rating.username}</h3>
+                          <div className="star-container">
+                              {[...Array(5)].map((_, i) => (
+                                  <StarTwoTone key={i} twoToneColor={i < rating.rating? "green":"white"} />
+                              ))}
+                          </div>
+                      </div>
+                      <div className="comment-content">
+                          {rating.comment}
+                      </div>
+                  </div>
+              </List.Item>
+          )} />
       </div>
     </div>
-  );
+  ));
 };
 
 export default MoviePage;

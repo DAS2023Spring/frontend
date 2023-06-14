@@ -71,7 +71,7 @@ const LoginPage = () => {
                 name="password"
                 rules={[
                   { required: true, message: "لطفا کلمه عبور را وارد کنید" },
-                  { min: 8, message: "کلمه عبور حداقل باید ۸ کاراکتر باشد" },
+                  // { min: 8, message: "کلمه عبور حداقل باید ۸ کاراکتر باشد" },
                 ]}
               >
                 <Input size="large" type="password" placeholder="کلمه عبور" />

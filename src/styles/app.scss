@@ -305,9 +305,8 @@ a:hover {
 
 .film-content {
   text-align: center;
-  position: absolute;
   width: 100%;
-  padding-top: 350px;
+  padding-top: 24rem;
   align-items: center;
 }
 
@@ -365,4 +364,41 @@ a:hover {
   margin: 10px auto;
   text-align: right;
   position: relative;
+}
+
+.rating {
+  @extend .movie-info;
+  display: block !important;
+  color: white !important;
+}
+
+.rating > .comment-container {
+  display: flex;
+  flex-direction: row;
+  padding: 1rem 2rem;
+  border: 1px solid #d9d9d9;
+  border-radius: 32px;
+}
+
+.comment-container > .comment-user {
+  padding-left: 1rem;
+  border-left: 1px solid #d9d9d9;
+}
+
+.comment-container > .comment-content {
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-right: 2rem;
+  font-size: 1.3rem;
+}
+
+.comment-user > .star-container {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: row;
+}
+
+.white-placeholder::placeholder {
+  color: rgba(217, 217, 217, 0.62);
 }
