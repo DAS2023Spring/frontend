@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../App";
 
 const NavBar = () => {
+  const { dispatch } = useContext(AuthContext);
   let navigate = useNavigate();
 
   const { state } = useContext(AuthContext);
@@ -18,6 +19,14 @@ const NavBar = () => {
       navigate("/login");
     }
   };
+  const logout = () => {
+    if (state.isAuthenticated) {
+      dispatch({
+        type: "LOGOUT",
+      });
+      navigate("/login")
+    }
+  }
   return (
     <Row align="middle" className="site-navbar">
       <Col span={6}></Col>
@@ -39,6 +48,11 @@ const NavBar = () => {
         <Button type="primary" onClick={clickButton}>
           {state.isAuthenticated? "صفحه کاربری": "ورود"}
         </Button>
+        {state.isAuthenticated? (
+          <Button type="primary" onClick={logout} className="logout-button">
+            خروج
+          </Button>
+        ):""}
       </Col>
     </Row>
   );
