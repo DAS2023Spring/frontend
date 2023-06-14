@@ -33,15 +33,7 @@ const NavBar = () => {
       <Col span={12} className="nav-item">
         <Link to="/">
           <img className="logo" src={logo} width={50} height={50} alt="logo" />
-        </Link>
-        <Link to="/movies">
-          <h3>فیلم ها</h3>
-        </Link>
-        <Link to="/movies">
-          <h3>نقدها </h3>
-        </Link>
-        <Link to="/movies">
-          <h3>ارتباط با ما </h3>
+          سینماشلف
         </Link>
       </Col>
       <Col span={6}>
