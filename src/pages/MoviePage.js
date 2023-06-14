@@ -118,7 +118,7 @@ const MoviePage = () => {
           <Col span={10}>
             <div className="movie-story">
               <div className="movie-name">
-                <h1>{movie.name}</h1>
+                <h1 dir="ltr">{movie.name}</h1>
                 <Button
                   type="primary"
                   loading={watchListButtonLoading}
@@ -133,7 +133,7 @@ const MoviePage = () => {
               {movie.overall_rating?
                 (<h3>امتیاز در سینماشلف: {movie.overall_rating} از 5</h3>):undefined
               }
-              {movie.story}
+              <div dir="ltr">{movie.story}</div>
             </div>
           </Col>
           <Col span={6}>

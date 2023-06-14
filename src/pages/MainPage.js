@@ -118,7 +118,7 @@ const MainPage = () => {
                         <h3>{movie.imdb_rating}</h3>
                       </div>
                       <Link to={`/movies/${movie.id}`}>
-                        <h3>{movie.name}</h3>
+                        <h3 dir="ltr">{movie.name}</h3>
                       </Link>
                     </div>
                     <Button
